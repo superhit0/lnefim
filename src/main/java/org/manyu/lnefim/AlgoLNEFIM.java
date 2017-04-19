@@ -55,6 +55,7 @@ public class AlgoLNEFIM {
 	
 	/** the minutil threshold */
 	int minUtil;
+	int minLength,maxLength;
 	
 	/** if this variable is set to true, some debugging information will be shown */
     final boolean  DEBUG = false;
@@ -147,6 +148,8 @@ public class AlgoLNEFIM {
 
 		// save minUtil value selected by the user
 		this.minUtil = minUtil;
+		this.minLength = minLength;
+		this.maxLength = maxLength;
 
 		// if the user choose to save to file
 		// create object for writing the output file
@@ -655,13 +658,13 @@ public class AlgoLNEFIM {
 	        temp[prefixLength] = newNamesToOldNames[e];
      
 	        // if the utility of PU{e} is enough to be a high utility itemset
-	        if(utilityPe  >= minUtil)
+	        if(utilityPe  >= minUtil && prefixLength+1>=minLength)
 	        {
 	        	// output PU{e}
 	        	output(prefixLength, utilityPe );
 	        }
 
-	        if(utilityPe>minUtil){
+	        if(utilityPe>minUtil && prefixLength+1<maxLength){
 	        	useUtilityBinArraysToCalculateUpperBoundsNegative(transactionsPe,-1,globalNegativeItemsToKeep);
 	        	List<Integer> promisingNegativeItems=new ArrayList<>();
 	        	for(Integer item:globalNegativeItemsToKeep){
@@ -713,11 +716,13 @@ public class AlgoLNEFIM {
 			// === recursive call to explore larger itemsets
 	    	if(activateSubtreeUtilityPruning){
 	    		// if sub-tree utility pruning is activated, we consider primary and secondary items
+				if(prefixLength+1<maxLength)
 	    		backtrackingEFIM(transactionsPe, newItemsToKeep, newItemsToExplore,prefixLength+1,utilityPe);
 	    	}else{
 	    		// if sub-tree utility pruning is deactivated, we consider secondary items also
 	    		// as primary items
                 //if(recur)
+				if(prefixLength+1<maxLength)
 	    		backtrackingEFIM(transactionsPe, newItemsToKeep, newItemsToKeep,prefixLength+1,utilityPe);
 	    	}
 		}
@@ -761,7 +766,7 @@ public class AlgoLNEFIM {
                 }
             }
             temp[prefixLength]=newNamesToOldNames[itemE];
-            if(utilityPe>=minUtil){
+            if(utilityPe>=minUtil && prefixLength+1>=minLength){
                 output(prefixLength,utilityPe);
             }
 			useUtilityBinArraysToCalculateUpperBoundsNegative(transactionsPe,i,promisingNegativeItems);
