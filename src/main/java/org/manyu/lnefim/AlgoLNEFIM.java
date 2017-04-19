@@ -775,7 +775,7 @@ public class AlgoLNEFIM {
             	if(utilityBinArraySU[ii]>=minUtil)
             		newpromisingNegativeItems.add(ii);
 			}
-            if(utilityPe>=minUtil){
+            if(utilityPe>=minUtil && prefixLength+1<maxLength){
                 negativeEFIM(transactionsPe,newpromisingNegativeItems,prefixLength+1,pos+1);
             }
         }
